@@ -1,0 +1,58 @@
+function [Y, freq] = make_spectrum(signal, fs)
+
+    Y = fft(signal);
+    Y = Y/(length(Y));
+    delta_f = fs/length(signal);
+    freq = 0:delta_f:(fs - delta_f); 
+
+    Y = Y(:);
+    freq = freq(:);
+end
+
+t = 0:1/6000:0.5;
+
+f1=236;
+
+signal_clean = 0.2*sin(2*pi*f1*t);
+
+[audio_signal, fs] = audioread('iiiii (1).wav');
+
+real = audio_signal(20001:44000);
+
+[Y, freq] = make_spectrum(real,48000);
+
+[Y1, freq1] = make_spectrum(signal_clean,6000);
+
+
+% Plot original and filtered signals
+
+figure;
+subplot(2,1,1);
+plot(freq, abs(Y),'-o','color', 'b');  % Plot magnitude of the FFT
+xlabel('Frequency (Hz)');
+ylabel('Magnitude');
+title('original signal');
+xlim([0 3000]); 
+
+subplot(2,1,2);
+plot(freq1, abs(Y1), '-o','color', 'g');  % Plot magnitude of the FFT
+xlabel('Frequency (Hz)');
+ylabel('Magnitude');
+title('clean signal');
+xlim([0 3000]); 
+
+figure;
+subplot(2,1,1);
+plot(freq, 20*log10(abs(Y)),'b');  % Plot magnitude of the FFT
+xlabel('Frequency (Hz)');
+ylabel('Magnitude');
+title('My signal');
+xlim([100 3000]); 
+hold on
+%subplot(2,1,2);
+plot(freq1, 20*log10(abs(Y1)),'g','LineWidth',2);  % Plot magnitude of the FFT
+xlabel('Frequency (Hz)');
+ylabel('Magnitude (dB)');
+title('comparison');
+legend('original signal', 'clean signal');
+xlim([50 3000]); 
